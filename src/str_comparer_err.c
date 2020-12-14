@@ -19,8 +19,8 @@ const char *STR_COMP_ERROR_MESSAGES[] = {
 int print_str_comp_error(str_comp_error_code_t err) {
     if (err) {
         fprintf(stderr, "Error: %s\n", STR_COMP_ERROR_MESSAGES[err]);
-        return 0;
+        return -1;
     }
     fprintf(stdout, "%s\n", STR_COMP_ERROR_MESSAGES[err]);
-    return -1;
+    return 0;
 }
