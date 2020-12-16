@@ -112,16 +112,15 @@ str_comp_error_code_t read_strings(input_data_t *input_data, strings_array_t arr
     if (file == NULL) {
         return STR_COMP_NOT_FOUND_INPUT_FILE;
     }
-    array_size_t i;
-    for (i = 0; i < input_data->num_line && !feof(file); i++) {
+    for (array_size_t i = 0; i < input_data->num_line; i++) {
         if (fgets(array[i], MAX_INPUT_STRING_SIZE, file) == NULL) {
+            if (feof(file)){
+                fclose(file);
+                return STR_COMP_NOT_ENOUGH_LINES;
+            }
             fclose(file);
             return STR_COMP_READ_FILE_ERROR;
         }
-    }
-    if (i < input_data->num_line) {
-        fclose(file);
-        return STR_COMP_NOT_ENOUGH_LINES;
     }
     fclose(file);
     return STR_COMP_OK;
@@ -132,9 +131,8 @@ int write_strings(input_data_t *input_data, strings_array_t array) {
     if (file == NULL) {
         return STR_COMP_NOT_FOUND_OUTPUT_FILE;
     }
-    array_size_t i;
     if (input_data->num_line != 0) {
-        for (i = 0; i < input_data->num_line; i++) {
+        for (array_size_t i = 0; i < input_data->num_line; i++) {
             if (fputs(array[i], file) == EOF) {
                 fclose(file);
                 return STR_COMP_WRITE_ERROR;

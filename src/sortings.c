@@ -39,11 +39,13 @@ void insertion(strings_array_t strings_array, array_size_t array_size, comparato
 /*-------------------------------------------------------------------------------------------------------- MERGE SORT */
 
 void merge(strings_array_t strings_array, array_size_t array_size, comparator_func_t compare) {
-    for (unsigned int size = array_size, part_len = 1; size > 1; size = (1 + (size - 1) / 2), part_len *= 2) { 
+    for (unsigned int size = array_size, part_len = 1; size > 1; size = (1 + (size - 1) / 2), part_len *= 2) {
         for (unsigned int i = 0; i < size - 1; i += 2) {
-            size_t len1 = part_len, len2 = (((i + 2) * part_len) <= array_size) ? part_len : (array_size - (i + 1) * part_len), buf_len = len1 + len2;
+            size_t len1 = part_len, len2 = (((i + 2) * part_len) <= array_size) ? part_len : (array_size - (i + 1) *
+                    part_len), buf_len =
+                    len1 + len2;
             unsigned int ind1 = i * part_len, ind2 = (i + 1) * part_len;
-            char* buf[buf_len];
+            char *buf[buf_len];
             while (len1 > 0 && len2 > 0) {
                 if (compare(strings_array[ind1], strings_array[ind2]) <= 0) {
                     buf[buf_len - (len1-- + len2)] = strings_array[ind1++];
@@ -52,11 +54,11 @@ void merge(strings_array_t strings_array, array_size_t array_size, comparator_fu
                 }
             }
             if (len1 > 0) {
-                memcpy(&buf[buf_len - len1], &strings_array[ind1], len1 * sizeof(char*));
+                memcpy(&buf[buf_len - len1], &strings_array[ind1], len1 * sizeof(char *));
             } else {
-                memcpy(&buf[buf_len - len2], &strings_array[ind2], len2 * sizeof(char*));
+                memcpy(&buf[buf_len - len2], &strings_array[ind2], len2 * sizeof(char *));
             }
-            memcpy(&strings_array[i * part_len], buf, buf_len * sizeof(char*));
+            memcpy(&strings_array[i * part_len], buf, buf_len * sizeof(char *));
         }
     }
 }
@@ -105,7 +107,7 @@ void radix(strings_array_t strings_array, array_size_t array_size, comparator_fu
         }
     }
     strings_array_t buffer = malloc(array_size * sizeof *strings_array);
-    if (buffer == NULL){
+    if (buffer == NULL) {
         sorting_error = STR_COMP_ALLOC_ERROR;
         return;
     }
