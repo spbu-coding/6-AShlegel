@@ -114,7 +114,7 @@ str_comp_error_code_t read_strings(input_data_t *input_data, strings_array_t arr
     }
     for (array_size_t i = 0; i < input_data->num_line; i++) {
         if (fgets(array[i], MAX_INPUT_STRING_SIZE, file) == NULL) {
-            if (feof(file)){
+            if (feof(file)) {
                 fclose(file);
                 return STR_COMP_NOT_ENOUGH_LINES;
             }
@@ -122,6 +122,8 @@ str_comp_error_code_t read_strings(input_data_t *input_data, strings_array_t arr
             return STR_COMP_READ_FILE_ERROR;
         }
     }
+    if (input_data->num_line && !strchr(array[input_data->num_line - 1], '\n'))
+        strcat(array[input_data->num_line - 1], "\n");
     fclose(file);
     return STR_COMP_OK;
 }
@@ -157,7 +159,7 @@ str_comp_error_code_t string_comparer(input_data_t *input_data) {
         strings_array = calloc(input_data->num_line, sizeof *strings_array);
         if (!strings_array) return STR_COMP_ALLOC_ERROR;
         for (array_size_t i = 0; i < input_data->num_line; i++) {
-            strings_array[i] = calloc(MAX_INPUT_STRING_SIZE, sizeof(char));
+            strings_array[i] = calloc(MAX_INPUT_STRING_SIZE + 1, sizeof(char));
             if (strings_array[i] == NULL) {
                 free_strings(strings_array, input_data->num_line);
                 return STR_COMP_ALLOC_ERROR;
