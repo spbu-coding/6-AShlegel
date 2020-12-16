@@ -113,7 +113,7 @@ str_comp_error_code_t read_strings(input_data_t *input_data, strings_array_t arr
         return STR_COMP_NOT_FOUND_INPUT_FILE;
     }
     for (array_size_t i = 0; i < input_data->num_line; i++) {
-        if (fgets(array[i], MAX_INPUT_STRING_SIZE, file) == NULL) {
+        if (fgets(array[i], MAX_INPUT_STRING_SIZE + 1, file) == NULL) {
             if (feof(file)) {
                 fclose(file);
                 return STR_COMP_NOT_ENOUGH_LINES;
@@ -153,7 +153,7 @@ int write_strings(input_data_t *input_data, strings_array_t array) {
 /*-------------------------------------------------------------------------------------------------- STRINGS COMPARER */
 
 str_comp_error_code_t string_comparer(input_data_t *input_data) {
-
+    str_comp_error_code_t err;
     strings_array_t strings_array = NULL;
     if (input_data->num_line) {
         strings_array = calloc(input_data->num_line, sizeof *strings_array);
@@ -165,14 +165,14 @@ str_comp_error_code_t string_comparer(input_data_t *input_data) {
                 return STR_COMP_ALLOC_ERROR;
             }
         }
-    }
-    str_comp_error_code_t err = read_strings(input_data, strings_array);
-    if (!err) {
-        input_data->sort_func(strings_array, input_data->num_line, input_data->comparator);
-        err = sorting_error;
-        if (!err) err = write_strings(input_data, strings_array);
-    }
-    free_strings(strings_array, input_data->num_line);
+        err = read_strings(input_data, strings_array);
+        if (!err){
+            input_data->sort_func(strings_array, input_data->num_line, input_data->comparator);
+            err = sorting_error;
+            if (!err) err = write_strings(input_data, strings_array);
+            free_strings(strings_array, input_data->num_line);
+        }
+    } else err = write_strings(input_data, strings_array);
     return err;
 }
 
