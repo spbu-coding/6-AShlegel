@@ -39,34 +39,26 @@ void insertion(strings_array_t strings_array, array_size_t array_size, comparato
 /*-------------------------------------------------------------------------------------------------------- MERGE SORT */
 
 void merge(strings_array_t strings_array, array_size_t array_size, comparator_func_t compare) {
-    for (array_size_t gap = 2; gap < array_size * 2; gap *= 2) {
-        for (array_size_t offset = 0; offset < array_size; offset += gap) {
-            array_size_t begin = offset,
-                    middle = ((offset + (offset + gap) / 2) > array_size) ? array_size : (offset + (offset + gap) / 2),
-                    end = ((offset + gap) > array_size) ? array_size : offset + gap;
-
-            strings_array_t tmp_array = (char **) malloc((middle - begin) * sizeof(char));
-            if (tmp_array == NULL) {
-                sorting_error = STR_COMP_ALLOC_ERROR;
-                return;
-            }
-            for (array_size_t i = begin; i < middle; i++) {
-                tmp_array[i - begin] = strings_array[i];
-            }
-            array_size_t step = middle;
-            while (step < end && begin < middle) {
-                if (compare(tmp_array[begin - offset], strings_array[step]) > 0) {
-                    strings_array[step + begin - middle] = strings_array[step];
-                    step++;
+    for (unsigned int size = array_size, part_len = 1; size > 1; size = (1 + (size - 1) / 2), part_len *= 2) {
+        for (unsigned int i = 0; i < size - 1; i += 2) {
+            size_t len1 = part_len, len2 = (((i + 2) * part_len) <= array_size) ? part_len : (array_size - (i + 1) *
+                    part_len), buf_len =
+                    len1 + len2;
+            unsigned int ind1 = i * part_len, ind2 = (i + 1) * part_len;
+            char *buf[buf_len];
+            while (len1 > 0 && len2 > 0) {
+                if (compare(strings_array[ind1], strings_array[ind2]) <= 0) {
+                    buf[buf_len - (len1-- + len2)] = strings_array[ind1++];
                 } else {
-                    strings_array[step + begin - middle] = tmp_array[begin - offset];
-                    begin++;
+                    buf[buf_len - (len1 + len2--)] = strings_array[ind2++];
                 }
             }
-            for (; begin < middle; begin++) {
-                strings_array[step + begin - middle] = tmp_array[begin - offset];
+            if (len1 > 0) {
+                memcpy(&buf[buf_len - len1], &strings_array[ind1], len1 * sizeof(char *));
+            } else {
+                memcpy(&buf[buf_len - len2], &strings_array[ind2], len2 * sizeof(char *));
             }
-            free(tmp_array);
+            memcpy(&strings_array[i * part_len], buf, buf_len * sizeof(char *));
         }
     }
 }
@@ -115,7 +107,7 @@ void radix(strings_array_t strings_array, array_size_t array_size, comparator_fu
         }
     }
     strings_array_t buffer = malloc(array_size * sizeof *strings_array);
-    if (buffer == NULL){
+    if (buffer == NULL) {
         sorting_error = STR_COMP_ALLOC_ERROR;
         return;
     }
