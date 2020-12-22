@@ -170,8 +170,8 @@ str_comp_error_code_t string_comparer(input_data_t *input_data) {
             input_data->sort_func(strings_array, input_data->num_line, input_data->comparator);
             err = sorting_error;
             if (!err) err = write_strings(input_data, strings_array);
-            free_strings(strings_array, input_data->num_line);
         }
+        free_strings(strings_array, input_data->num_line);
     } else err = write_strings(input_data, strings_array);
     return err;
 }
