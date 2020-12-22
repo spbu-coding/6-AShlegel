@@ -113,7 +113,7 @@ str_comp_error_code_t read_strings(input_data_t *input_data, strings_array_t arr
         return STR_COMP_NOT_FOUND_INPUT_FILE;
     }
     for (array_size_t i = 0; i < input_data->num_line; i++) {
-        if (fgets(array[i], MAX_INPUT_STRING_SIZE + 1, file) == NULL) {
+        if (fgets(array[i], MAX_INPUT_STRING_SIZE + 3, file) == NULL) {
             if (feof(file)) {
                 fclose(file);
                 return STR_COMP_NOT_ENOUGH_LINES;
@@ -156,10 +156,10 @@ str_comp_error_code_t string_comparer(input_data_t *input_data) {
     str_comp_error_code_t err;
     strings_array_t strings_array = NULL;
     if (input_data->num_line) {
-        strings_array = calloc(input_data->num_line, sizeof *strings_array);
+        strings_array = calloc(input_data->num_line + 1, sizeof *strings_array);
         if (!strings_array) return STR_COMP_ALLOC_ERROR;
         for (array_size_t i = 0; i < input_data->num_line; i++) {
-            strings_array[i] = calloc(MAX_INPUT_STRING_SIZE + 1, sizeof(char));
+            strings_array[i] = calloc(MAX_INPUT_STRING_SIZE + 3, sizeof(char));
             if (strings_array[i] == NULL) {
                 free_strings(strings_array, input_data->num_line);
                 return STR_COMP_ALLOC_ERROR;
